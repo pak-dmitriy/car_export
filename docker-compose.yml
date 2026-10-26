@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    container_name: car-export-db
+    environment:
+      POSTGRES_DB: carexportdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5434:5432"
+    volumes:
+      - car-export-data:/var/lib/postgresql/data
+
+volumes:
+  car-export-data:
