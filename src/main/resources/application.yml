@@ -11,3 +11,12 @@ spring:
 
 server:
   port: 8081
+
+jwt:
+  secret: ${JWT_SECRET:dev-secret-key-change-me-dev-secret-key-change-me}
+  expiration-ms: 86400000
+
+cors:
+  allowed-origins:
+    http://localhost:5173,
+    http://localhost:3000
