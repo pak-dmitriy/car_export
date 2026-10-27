@@ -1,9 +1,6 @@
 package com.export.car.controller;
 
-import com.export.car.dto.CarCreateRequest;
-import com.export.car.dto.CarResponse;
-import com.export.car.dto.CarUpdateRequest;
-import com.export.car.dto.SuccessResponse;
+import com.export.car.dto.*;
 import com.export.car.service.CarService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +32,20 @@ public class AdminCarController {
     public SuccessResponse delete(@PathVariable Long id) {
         carService.delete(id);
         return new SuccessResponse("Car has been deleted");
+    }
+
+    @GetMapping
+    public CarListResponse list(@RequestParam(defaultValue = "1") int page,
+                                @RequestParam(defaultValue = "12") int limit,
+                                @RequestParam(defaultValue = "createdAt") String sortBy,
+                                @RequestParam(defaultValue = "desc") String direction,
+                                CarFilter filter) {
+        return carService.getAdminCars(filter, page, limit, sortBy, direction);
+    }
+
+    @GetMapping("/{id}")
+    public CarResponse get(@PathVariable Long id) {
+        return carService.getById(id);
     }
 
 }

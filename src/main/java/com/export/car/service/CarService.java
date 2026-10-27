@@ -25,18 +25,38 @@ public class CarService {
 
     private final CarRepository carRepository;
 
+    private static final List<CarStatus> ALL_STATUSES = List.of(CarStatus.values());
+
+
     private static final List<CarStatus> PUBLIC_STATUSES =
             List.of(CarStatus.PUBLISHED, CarStatus.RESERVED);
 
     private static final Set<String> SORT_FIELDS =
-            Set.of("createdAt", "price", "mileage");
+            Set.of("createdAt", "price", "year", "mileage");
 
     @Transactional(readOnly = true)
     public CarListResponse getPublicCars(CarFilter filter, int page, int limit,
                                          String sortBy, String direction) {
+
+        return search(filter, PUBLIC_STATUSES, page, limit, sortBy, direction);
+    }
+
+    @Transactional(readOnly = true)
+    public CarListResponse getAdminCars(CarFilter filter, int page, int limit,
+                                        String sortBy, String direction) {
+        return search(filter, ALL_STATUSES, page, limit, sortBy, direction);
+    }
+
+    @Transactional(readOnly = true)
+    public CarResponse getById(Long id) {
+        return CarResponse.from(findCar(id));
+    }
+
+    private CarListResponse search(CarFilter filter, List<CarStatus> statuses, int page, int limit,
+                                   String sortBy, String direction) {
         if (page < 1 || limit < 1 || limit > 50) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "page and limit should be between 1 and 50.");
+                    HttpStatus.BAD_REQUEST, "page must be >= 1, limit must be between 1 and 50");
         }
 
         if (!SORT_FIELDS.contains(sortBy)) {
@@ -55,7 +75,7 @@ public class CarService {
         }
 
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(dir, sortBy).and(Sort.by("id")));
-        Page<Car> result = carRepository.findAll(CarSpecification.build(filter, PUBLIC_STATUSES), pageable);
+        Page<Car> result = carRepository.findAll(CarSpecification.build(filter, statuses), pageable);
 
         List<CarResponse> items = result.getContent().stream().map(CarResponse::from).toList();
         return new CarListResponse(items, page, limit, result.getTotalElements());
