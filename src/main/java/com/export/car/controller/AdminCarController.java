@@ -3,6 +3,7 @@ package com.export.car.controller;
 import com.export.car.dto.CarCreateRequest;
 import com.export.car.dto.CarResponse;
 import com.export.car.dto.CarUpdateRequest;
+import com.export.car.dto.SuccessResponse;
 import com.export.car.service.CarService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +32,9 @@ public class AdminCarController {
     }
 
     @DeleteMapping("/{id}")
-    public void  delete(@PathVariable Long id) {
+    public SuccessResponse delete(@PathVariable Long id) {
         carService.delete(id);
+        return new SuccessResponse("Car has been deleted");
     }
 
 }
