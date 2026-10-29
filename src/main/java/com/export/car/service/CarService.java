@@ -5,6 +5,7 @@ import com.export.car.entity.Car;
 import com.export.car.entity.CarStatus;
 import com.export.car.repository.CarRepository;
 import com.export.car.repository.CarSpecification;
+import jakarta.validation.constraints.Max;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Year;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -33,6 +36,28 @@ public class CarService {
 
     private static final Set<String> SORT_FIELDS =
             Set.of("createdAt", "price", "year", "mileage");
+
+    private static final Map<CarStatus, Set<CarStatus>> ALLOWED_TRANSACTIONS =
+            Map.of(
+                    CarStatus.DRAFT, EnumSet.of(CarStatus.PUBLISHED, CarStatus.HIDDEN),
+                    CarStatus.PUBLISHED, EnumSet.of(CarStatus.RESERVED, CarStatus.SOLD, CarStatus.HIDDEN),
+                    CarStatus.RESERVED, EnumSet.of(CarStatus.PUBLISHED, CarStatus.SOLD, CarStatus.HIDDEN),
+                    CarStatus.SOLD, EnumSet.noneOf(CarStatus.class),
+                    CarStatus.HIDDEN, EnumSet.of(CarStatus.DRAFT, CarStatus.PUBLISHED)
+            );
+
+    @Transactional
+    public CarResponse changeStatus(Long id, CarStatus newStatus) {
+        Car car = findCar(id);
+
+        if (!ALLOWED_TRANSACTIONS.get(car.getStatus()).contains(newStatus)) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "Cannot change status from " + car.getStatus() + " to " + newStatus);
+        }
+
+        car.setStatus(newStatus);
+        return CarResponse.from(car);
+    }
 
     @Transactional(readOnly = true)
     public CarListResponse getPublicCars(CarFilter filter, int page, int limit,

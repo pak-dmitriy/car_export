@@ -22,9 +22,9 @@ public class AdminCarController {
     }
 
     @PutMapping("/{id}")
-    public  CarResponse update(@PathVariable Long id,
-                               @Valid
-                               @RequestBody CarUpdateRequest request) {
+    public CarResponse update(@PathVariable Long id,
+                              @Valid
+                              @RequestBody CarUpdateRequest request) {
         return carService.update(id, request);
     }
 
@@ -46,6 +46,13 @@ public class AdminCarController {
     @GetMapping("/{id}")
     public CarResponse get(@PathVariable Long id) {
         return carService.getById(id);
+    }
+
+    @PatchMapping("/{id}/status")
+    public CarResponse changeStatus(@PathVariable Long id,
+                                    @Valid
+                                    @RequestBody CarStatusRequest request) {
+        return carService.changeStatus(id, request.status());
     }
 
 }
