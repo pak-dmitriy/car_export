@@ -8,6 +8,10 @@ spring:
       ddl-auto: validate
   flyway:
     enabled: true
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
 
 server:
   port: 8081
@@ -20,3 +24,6 @@ cors:
   allowed-origins:
     http://localhost:5173,
     http://localhost:3000
+
+storage:
+  upload-dir: uploads
