@@ -27,3 +27,11 @@ cors:
 
 storage:
   upload-dir: uploads
+
+app:
+  admin:
+    email: ${ADMIN_EMAIL:}
+    password: ${ADMIN_PASSWORD:}
+  demo-buyer:
+    email: ${DEMO_BUYER_EMAIL:}
+    password: ${DEMO_BUYER_PASSWORD:}
