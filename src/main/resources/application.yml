@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5434/carexportdb
+    url: ${DB_URL:jdbc:postgresql://localhost:5434/carexportdb}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:root}
   jpa:
@@ -14,19 +14,17 @@ spring:
       max-request-size: 6MB
 
 server:
-  port: 8081
+  port: ${PORT:8081}
 
 jwt:
   secret: ${JWT_SECRET:dev-secret-key-change-me-dev-secret-key-change-me}
   expiration-ms: 86400000
 
 cors:
-  allowed-origins:
-    http://localhost:5173,
-    http://localhost:3000
+  allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
 
 storage:
-  upload-dir: uploads
+  upload-dir: ${UPLOAD_DIR:uploads}
 
 app:
   admin:
