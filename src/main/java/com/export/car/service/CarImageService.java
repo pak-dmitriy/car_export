@@ -31,12 +31,12 @@ public class CarImageService {
                     "A car can have at most " + MAX_IMAGES + " images");
         }
 
-        String fileName = fileStorageService.store(file);
+        FileStorageService.StoredFile stored = fileStorageService.store(file);
 
         CarImage image = new CarImage();
         image.setCar(car);
-        image.setFileName(fileName);
-        image.setFileUrl("/uploads/" + fileName);
+        image.setFileName(stored.publicId());
+        image.setFileUrl(stored.url());
         image.setMain(car.getImages().isEmpty());
 
         carImageRepository.save(image);
